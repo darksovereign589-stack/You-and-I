@@ -3,222 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>For My Jaan ❤️ — A Little Universe</title>
-    <!-- Google Fonts for Cinematic & Handwritten Typography -->
+    <title>A Little Universe For You ❤️ — By Sudip</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Great+Vibes&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Great+Vibes&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Canvas for Stars, Shooting Stars, Fireflies & Butterflies -->
-    <canvas id="universe-canvas"></canvas>
+    <!-- Canvas for Midnight Sky, Stars, Shooting Stars, Butterflies & Fireflies -->
+    <canvas id="universeCanvas"></canvas>
 
-    <!-- Global Audio Player -->
-    <audio id="bg-audio" preload="auto" loop></audio>
-    <audio id="special-audio" preload="auto" loop></audio>
+    <!-- Global Audio Controller Element -->
+    <audio id="globalAudio" preload="auto" loop></audio>
+    <audio id="transitionAudio" preload="auto"></audio>
 
-    <!-- Autoplay Fallback Modal -->
-    <div id="audio-fallback-modal" class="modal hidden">
-        <div class="modal-content glass-card">
-            <h3>✨ Set the Mood</h3>
-            <p>Tap below to awaken the music of our universe.</p>
-            <button id="enable-audio-btn" class="btn-romantic">Turn the music on ✨</button>
+    <!-- Autoplay Fallback / Music Control Pill -->
+    <div id="musicControlPill" class="music-pill hidden" onclick="toggleGlobalMusic()">
+        <span id="musicIcon">🎵</span>
+        <span id="musicLabel">Play Music</span>
+    </div>
+
+    <!-- Secret Developer Trigger Star -->
+    <div id="secretStarTrigger" class="secret-star-trigger" title="Magical Star">⭐</div>
+
+    <!-- ================= 1. OPENING UNIVERSE WAKING UP ================= -->
+    <section id="openingScreen" class="screen active">
+        <div class="opening-content-box" id="openingContentBox">
+            <!-- Dynamically injected text sequences -->
+        </div>
+        <div id="proposalButtons" class="proposal-buttons hidden">
+            <button class="romantic-btn yes-btn" onclick="handleYesClick()">YES ❤️</button>
+            <button class="romantic-btn no-btn" id="noBtn" onmouseover="dodgeNoButton()" ontouchstart="dodgeNoButton()" onclick="handleNoClick()">NO 🙈</button>
+        </div>
+    </section>
+
+    <!-- ================= 2. CHAPTERS & EXPERIENCES CONTAINER ================= -->
+    <section id="experienceScreen" class="screen">
+        <div id="cinematicStage" class="cinematic-stage"></div>
+    </section>
+
+    <!-- ================= 3. SECRET GARDEN DEV LOGIN MODAL ================= -->
+    <div id="devModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="close-modal" onclick="closeDevModal()">×</button>
+            <h2 class="modal-title font-cinzel">Secret Garden</h2>
+            <p class="modal-subtitle">Enter the secret code to access Sudip's Developer Dashboard</p>
+            <input type="password" id="devPasswordInput" class="modal-input" maxlength="4" placeholder="••••">
+            <button class="romantic-btn yes-btn" style="width: 100%; margin-top: 1rem;" onclick="verifyDevPassword()">Unlock ✨</button>
+            <div id="modalError" class="modal-error"></div>
         </div>
     </div>
 
-    <!-- Hidden Special Star (Tap 5 times to open Developer Mode) -->
-    <div id="secret-star" class="secret-star" title="✨"></div>
+    <!-- ================= 4. DEVELOPER DASHBOARD ================= -->
+    <section id="devDashboardScreen" class="screen dev-screen">
+        <div class="dev-container">
+            <div class="dev-header">
+                <div>
+                    <h1 class="font-cinzel" style="color: var(--accent-gold);">🔐 Sudip's Developer Dashboard</h1>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Changes saved here instantly update the live public experience globally.</p>
+                </div>
+                <div class="dev-actions">
+                    <button class="romantic-btn no-btn" onclick="exitDevDashboard()">Exit to Universe</button>
+                    <button class="romantic-btn yes-btn" onclick="saveAllGlobalData()">SAVE GLOBALLY 💾</button>
+                </div>
+            </div>
 
-    <!-- Developer Secret Login Modal -->
-    <div id="dev-login-modal" class="modal hidden">
-        <div class="modal-content glass-card dev-modal">
-            <h3>Secret Garden 🦋</h3>
-            <p>Enter the secret code</p>
-            <input type="password" id="dev-password-input" placeholder="••••" maxlength="6">
-            <button id="dev-unlock-btn" class="btn-romantic">Unlock ✨</button>
-            <p id="dev-login-error" class="error-msg"></p>
-            <button id="close-dev-login" class="btn-text">Close</button>
+            <!-- General Settings -->
+            <div class="dev-card">
+                <h3>💖 Personalization & Messages</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Beloved's Name / Nickname</label>
+                        <input type="text" id="devBelovedName" class="form-control" placeholder="e.g. Jaan">
+                    </div>
+                    <div class="form-group">
+                        <label>Your Name (Sudip)</label>
+                        <input type="text" id="devMyName" class="form-control" value="Sudip">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Opening Secret Sequence Texts (comma separated or JSON)</label>
+                        <textarea id="devOpeningTexts" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Final Message (Types letter-by-letter at the end)</label>
+                        <textarea id="devFinalMessage" class="form-control" rows="4"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Default Background Music -->
+            <div class="dev-card">
+                <h3>🎶 Default Background Music</h3>
+                <div class="form-group">
+                    <label>Upload Default Background Song (MP3 / WAV)</label>
+                    <input type="file" id="devDefaultAudioInput" class="form-control" accept="audio/*">
+                </div>
+                <div id="devDefaultAudioStatus" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;"></div>
+            </div>
+
+            <!-- Photos & Memories Manager -->
+            <div class="dev-card">
+                <h3>📸 Cinematic Memory Photos & Special Music</h3>
+                <div class="form-group">
+                    <label>Upload Photos (Multiple at once supported)</label>
+                    <input type="file" id="devPhotosInput" class="form-control" accept="image/*" multiple>
+                </div>
+                <div id="devPhotoListContainer" class="dev-photo-list"></div>
+            </div>
+
+            <!-- Handwritten Letter Manager -->
+            <div class="dev-card">
+                <h3>💌 Handwritten Letter Pages</h3>
+                <div class="form-group">
+                    <label>Upload Letter Pages (Scan / Image)</label>
+                    <input type="file" id="devLetterInput" class="form-control" accept="image/*" multiple>
+                </div>
+                <div id="devLetterListContainer" class="dev-photo-list"></div>
+            </div>
+
+            <div class="dev-footer-actions">
+                <button class="romantic-btn yes-btn" onclick="saveAllGlobalData()">SAVE GLOBALLY 💾</button>
+            </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Developer Dashboard -->
-    <div id="dev-dashboard" class="dashboard-drawer hidden">
-        <div class="dashboard-header">
-            <h2>✨ Developer Control Center</h2>
-            <button id="close-dashboard" class="close-btn">&times;</button>
-        </div>
-        <div class="dashboard-body">
-            <section class="dash-section">
-                <h3>Personalization</h3>
-                <label>Her Name / Nickname</label>
-                <input type="text" id="dash-her-name" value="Jaan">
-                <label>Your Name</label>
-                <input type="text" id="dash-my-name" value="Sudip">
-            </section>
+    <!-- Global Toast Notification -->
+    <div id="globalToast" class="global-toast">Everything is saved globally ✨</div>
 
-            <section class="dash-section">
-                <h3>Messages & Chapters</h3>
-                <label>Opening Greeting</label>
-                <textarea id="dash-msg-opening">You are looking too beautiful today, Jaan...</textarea>
-                <label>YES Response</label>
-                <textarea id="dash-msg-yes">I knew it... 😌❤️ Come... I made something for you.</textarea>
-                <label>Birthday Greeting</label>
-                <textarea id="dash-msg-birthday">HAPPY BIRTHDAY, MY BEAUTIFUL JAAN ❤️</textarea>
-                <label>Secret Butterfly Message</label>
-                <textarea id="dash-msg-secret">You found a little secret... 🦋 I love you more than words can express.</textarea>
-                <label>Final Cinematic Message</label>
-                <textarea id="dash-msg-final">I hope you always remember how special you are to me, and how every star in the sky reminds me of your smile. Happy Birthday, my Jaan. ❤️</textarea>
-            </section>
-
-            <section class="dash-section">
-                <h3>Default Background Music</h3>
-                <input type="file" id="dash-default-music" accept="audio/*">
-                <audio id="dash-default-preview" controls class="preview-audio hidden"></audio>
-            </section>
-
-            <section class="dash-section">
-                <h3>Memories & Photos</h3>
-                <div id="dash-photos-container"></div>
-                <button id="add-photo-btn" class="btn-secondary">+ Add Photo Memory</button>
-            </section>
-
-            <section class="dash-section">
-                <h3>Letter Pages (Handwritten / Images)</h3>
-                <div id="dash-letter-container"></div>
-                <button id="add-letter-page-btn" class="btn-secondary">+ Add Letter Page</button>
-            </section>
-
-            <button id="save-globally-btn" class="btn-romantic btn-save">SAVE GLOBALLY 💾</button>
-            <p id="save-status-msg" class="save-status"></p>
-        </div>
-    </div>
-
-    <!-- MAIN APP FLOW CONTAINER -->
-    <main id="app-container">
-
-        <!-- PHASE 0: WAKING UNIVERSE & OPENING DIALOGUE -->
-        <section id="scene-opening" class="scene active">
-            <div class="opening-dialogue-container">
-                <div id="dialogue-line-1" class="dialogue-line hidden">Psst...</div>
-                <div id="dialogue-line-2" class="dialogue-line hidden">Yes... YOU. ❤️</div>
-                <div id="dialogue-line-3" class="dialogue-line hidden">You are looking too beautiful today, Jaan...</div>
-                <div id="dialogue-line-4" class="dialogue-line hidden">Humein ghutne mein lane ka iraada hai kya? ❤️</div>
-                
-                <div id="opening-buttons" class="opening-buttons hidden">
-                    <button id="btn-yes" class="btn-romantic btn-pulse">YES ❤️</button>
-                    <button id="btn-no" class="btn-ghost">NO 🙈</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- PHASE 1: LITTLE UNIVERSE -->
-        <section id="scene-universe" class="scene">
-            <div class="universe-text-box">
-                <p class="fade-text" data-delay="1000">Tonight, the stars aren't here for everyone.</p>
-                <p class="fade-text" data-delay="4000">They're here for you.</p>
-                <p class="fade-text" data-delay="7000">Because today is your day.</p>
-            </div>
-            <div class="scene-continue">
-                <button id="btn-to-birthday" class="btn-romantic">Step into your light ✨</button>
-            </div>
-        </section>
-
-        <!-- PHASE 2: BIRTHDAY REVEAL -->
-        <section id="scene-birthday" class="scene">
-            <div class="birthday-reveal-content">
-                <h1 id="display-birthday-title" class="cinematic-title">HAPPY BIRTHDAY, MY BEAUTIFUL JAAN ❤️</h1>
-                <p class="signature">— From <span class="cursive-name">Sudip</span></p>
-                <button id="btn-to-memories" class="btn-romantic">Begin Journey 🦋</button>
-            </div>
-        </section>
-
-        <!-- PHASE 3 & 4: CINEMATIC MEMORIES & PHOTOS -->
-        <section id="scene-memories" class="scene">
-            <div class="memory-slider-container">
-                <div id="memory-card-wrapper" class="memory-card-wrapper">
-                    <!-- Dynamic Photos rendered here -->
-                </div>
-                <div class="memory-controls">
-                    <button id="prev-memory" class="btn-nav">&larr;</button>
-                    <span id="memory-indicator">1 / 1</span>
-                    <button id="next-memory" class="btn-nav">&rarr;</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- PHASE 5: THINGS I LOVE ABOUT YOU -->
-        <section id="scene-love-cards" class="scene">
-            <h2 class="section-heading">Little Pieces of You ❤️</h2>
-            <div class="cards-grid" id="love-cards-grid">
-                <!-- Glowing Interactive Cards -->
-            </div>
-            <button id="btn-to-constellation" class="btn-romantic">Continue to Constellation ✨</button>
-        </section>
-
-        <!-- PHASE 6: CONSTELLATION -->
-        <section id="scene-constellation" class="scene">
-            <h2 class="section-heading">Your Constellation</h2>
-            <p class="section-sub">Tap the glowing stars to reveal hidden memories.</p>
-            <div class="constellation-sky" id="constellation-sky">
-                <!-- Interactive Star Nodes -->
-            </div>
-            <button id="btn-to-letter" class="btn-romantic">Read Your Letter 💌</button>
-        </section>
-
-        <!-- PHASE 7: LETTER -->
-        <section id="scene-letter" class="scene">
-            <div class="letter-intro" id="letter-intro-box">
-                <p>There is something I wanted to tell you...</p>
-                <div class="glowing-envelope" id="open-envelope-btn">
-                    <div class="envelope-flap"></div>
-                    <div class="envelope-body">💌</div>
-                    <span>Open it ❤️</span>
-                </div>
-            </div>
-            <div id="letter-reader" class="letter-reader hidden">
-                <div class="letter-pages-container" id="letter-pages-container">
-                    <!-- Pages rendered dynamically -->
-                </div>
-                <div class="letter-nav">
-                    <button id="prev-letter-page" class="btn-ghost">&larr; Prev</button>
-                    <span id="letter-page-indicator">Page 1 of 1</span>
-                    <button id="next-letter-page" class="btn-romantic">Next &rarr;</button>
-                </div>
-                <button id="btn-to-cake" class="btn-romantic finish-letter-btn">Continue to Cake 🎂</button>
-            </div>
-        </section>
-
-        <!-- PHASE 8: BIRTHDAY CAKE & WISH -->
-        <section id="scene-cake" class="scene">
-            <div class="cake-container">
-                <p class="cake-prompt">Before you continue...</p>
-                <h2 class="cake-title">Make a wish. ❤️</h2>
-                <div class="birthday-cake" id="birthday-cake">
-                    <div class="candle" data-index="1"><div class="flame"></div></div>
-                    <div class="candle" data-index="2"><div class="flame"></div></div>
-                    <div class="candle" data-index="3"><div class="flame"></div></div>
-                    <div class="cake-body">🎂</div>
-                </div>
-                <p class="cake-instruction" id="cake-instruction">Tap the candles to blow them out ✨</p>
-                <button id="btn-to-final" class="btn-romantic hidden">See Final Message ❤️</button>
-            </div>
-        </section>
-
-        <!-- PHASE 9: FINAL CINEMATIC ENDING & ROCKET -->
-        <section id="scene-final" class="scene">
-            <div class="final-message-container">
-                <p id="typed-final-message" class="typed-message"></p>
-            </div>
-            <div id="rocket-container" class="rocket-container hidden">
-                <div class="rocket" id="magic-rocket">🚀</div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- App Logic Script -->
-    <script src="script.js"></script>
+    <!-- External Script Module -->
+    <script type="module" script-type="app" src="script.js"></script>
 </body>
 </html>
+
